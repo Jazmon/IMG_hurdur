@@ -3,6 +3,9 @@ import { graphql, GraphQLSchema, GraphQLObjectType, GraphQLString } from 'graphq
 import graphqlHTTP from 'express-graphql';
 const app = express();
 
+const PORT = process.env.PORT || 8000;
+const IP = process.env.IP || 'localhost';
+
 const schema = new GraphQLSchema({
   query: new GraphQLObjectType({
     name: 'RootQueryType',
@@ -23,5 +26,6 @@ app.get('/', (req, res) => {
   res.json({hello: 'world!'});
 });
 
-console.log('Listening on 127.0.0.1:3000');
-app.listen(3000);
+console.log('Server started!');
+console.log(`Listening on ${IP}:${PORT}`);
+app.listen(PORT);
