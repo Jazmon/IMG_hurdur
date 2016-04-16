@@ -20,6 +20,14 @@ const schema = new GraphQLSchema({
   })
 });
 
+const apiRouter = new express.Router();
+
+apiRouter.get('/', (req, res) => {
+  res.send('welcome to api!');
+});
+
+app.use('/api', apiRouter);
+
 app.use('/graphql', graphqlHTTP({schema: schema, graphiql: true, rootValue: schema}));
 
 app.get('/', (req, res) => {

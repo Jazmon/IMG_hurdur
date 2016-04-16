@@ -2,9 +2,8 @@
   "name": "img_hurdur",
   "version": "0.0.1",
   "description": "Image service",
-  "main": "index.js",
+  "main": "src/server/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node src/server",
     "build": "webpack --config webpack.config.babel.js --progress --colors",
     "build-production": "webpack --config webpack.config.babel.js --progress --colors",
@@ -38,6 +37,7 @@
     "jsonwebtoken": "^5.7.0",
     "koa": "^1.2.0",
     "koa-graphql": "^0.4.13",
+    "nodemon": "^1.9.1",
     "pg": "^4.5.2",
     "react": "^15.0.1",
     "react-dom": "^15.0.1",

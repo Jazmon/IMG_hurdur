@@ -4,7 +4,7 @@ var config = require('./webpack.config.babel')
 var path = require('path');
 
 new WebpackDevServer(webpack(config), {
-  publicPath:  '/src/app/',
+  publicPath:  'src/app',
   hot: true,
   inline: true,
   historyApiFallback: true
