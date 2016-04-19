@@ -10,12 +10,12 @@ import expressJwt from 'express-jwt';
 import expressGraphQL from 'express-graphql';
 import jwt from 'jsonwebtoken';
 import PrettyError from 'pretty-error';
-import models from './data/models';
-import schema from './data/schema';
-import routes from './routes';
-import assets from './assets';
+//import models from './data/models';
+//import schema from './data/schema';
+//import routes from './routes';
+//import assets from './assets';
 import {
-  port, auth, debug,
+  port, auth, debug, ip,
 } from './config';
 
 const app = express();
@@ -27,20 +27,20 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 // authentication
-app.use(expressJwt({
+/*app.use(expressJwt({
   secret: auth.jwt.secret,
   credentialsRequired: false,
   getToken: req => req.cookies.id_token,
-}));
+}));*/
 
 
 // register API middleware
-app.use('/graphql', expressGraphQL(req => ({
+/*app.use('/graphql', expressGraphQL(req => ({
   schema,
   graphiql: true,
   rootValue: { request: req },
   pretty: debug,
-})));
+})));*/
 
 
 // error handling
@@ -60,11 +60,11 @@ app.use((err, req, res, next) => {
 });
 
 // launch server
-models.sync().catch(err => console.error(err.stack)).then(() => {
+/*models.sync().catch(err => console.error(err.stack)).then(() => {
   app.listen(port, () => {
     console.log(`The server is running at http://localhost:${port}/`);
   })
-});
+});*/
 
 
 //
@@ -104,5 +104,5 @@ app.get('/', (req, res) => {
 });
 
 console.log('Server started!');
-console.log(`Listening on ${IP}:${PORT}`);
-app.listen(PORT);
+console.log(`Listening on ${ip}:${port}`);
+app.listen(port);
