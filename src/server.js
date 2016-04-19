@@ -1,48 +1,24 @@
-// import express from 'express';
-// import { graphql, GraphQLSchema, GraphQLObjectType, GraphQLString } from 'graphql';
-// import graphqlHTTP from 'express-graphql';
-
 import path from 'path';
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import expressJwt from 'express-jwt';
-import expressGraphQL from 'express-graphql';
 import jwt from 'jsonwebtoken';
 import PrettyError from 'pretty-error';
-//import models from './data/models';
-//import schema from './data/schema';
-//import routes from './routes';
-//import assets from './assets';
-import {
-  port, auth, debug, ip,
-} from './config';
+import morgan from 'morgan';
+import mongoose from 'mongoose';
 
+import { port, auth, debug, ip, } from './config';
 const app = express();
 
+mongoose.connect(`mongodb://atte.xyz/imghurdur`);
+
 // register server middleware
+app.use(morgan('combined'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-
-// authentication
-/*app.use(expressJwt({
-  secret: auth.jwt.secret,
-  credentialsRequired: false,
-  getToken: req => req.cookies.id_token,
-}));*/
-
-
-// register API middleware
-/*app.use('/graphql', expressGraphQL(req => ({
-  schema,
-  graphiql: true,
-  rootValue: { request: req },
-  pretty: debug,
-})));*/
-
-
 // error handling
 const pe = new PrettyError();
 pe.skipNodeFiles();
@@ -59,13 +35,42 @@ app.use((err, req, res, next) => {
   }));
 });
 
+const router = express.Router();
+
+router.route('/test')
+  .get((req, res) => {
+    res.json({hello: 'world!'});
+  });
+
+app.use('/api', router);
+
+console.log('Server started!');
+console.log(`Listening on ${ip}:${port}`);
+app.listen(port);
+
+// authentication
+/*app.use(expressJwt({
+  secret: auth.jwt.secret,
+  credentialsRequired: false,
+  getToken: req => req.cookies.id_token,
+}));*/
+
+// register API middleware
+/*app.use('/graphql', expressGraphQL(req => ({
+  schema,
+  graphiql: true,
+  rootValue: { request: req },
+  pretty: debug,
+})));*/
+
+
+
 // launch server
 /*models.sync().catch(err => console.error(err.stack)).then(() => {
   app.listen(port, () => {
     console.log(`The server is running at http://localhost:${port}/`);
   })
 });*/
-
 
 //
 // const PORT = process.env.PORT || 8000;
@@ -99,10 +104,6 @@ app.use((err, req, res, next) => {
 //   graphiql: DEBUG
 // }));
 
-app.get('/', (req, res) => {
+/*app.get('/', (req, res) => {
   res.json({hello: 'world!'});
-});
-
-console.log('Server started!');
-console.log(`Listening on ${ip}:${port}`);
-app.listen(port);
+});*/
