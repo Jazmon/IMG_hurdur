@@ -7,4 +7,4 @@ if (env === 'development' || env === 'test') {
 //  require('babel-polyfill');
 }
 
-exports = module.exports = require('./app');
+exports = module.exports = require('./server');

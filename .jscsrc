@@ -26,7 +26,7 @@
   },
   "disallowSpacesInsideArrayBrackets": true,
   "disallowSpacesInsideParentheses": true,
-  "disallowTrailingComma": true,
+  "disallowTrailingComma": false,
   "disallowTrailingWhitespace": true,
   "requireCommaBeforeLineBreak": true,
   "requireLineFeedAtFileEnd": true,
