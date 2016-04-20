@@ -34,3 +34,4 @@ node_modules
 
 # Mongodb data folder
 data/*
+mediaroot
