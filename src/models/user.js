@@ -1,11 +1,31 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 
 const UserSchema = new mongoose.Schema({
-  name: String,
-  email: String,
-  username: String,
-  hashedPassword: String,
-  salt: String,
+  local: {
+    email: String,
+    password: String,
+    name: String,
+  },
+  facebook: {
+    id: String,
+    token: String,
+    email: String,
+    name: String,
+  },
+  twitter: {
+    id: String,
+    token: String,
+    displayName: String,
+    username: String,
+  },
+  google: {
+    id: String,
+    token: String,
+    email: String,
+    name: String,
+  },
+
   images: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Image'
@@ -37,6 +57,18 @@ const UserSchema = new mongoose.Schema({
   }
 });
 
+// Methods
+
+// Generate a hash
+UserSchema.methods.generateHash = (password) =>
+  bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
+
+// Validate password
+UserSchema.methods.isValidPassword = function(password) {
+  return bcrypt.compareSync(password, this.local.password);
+};
+
 const User = mongoose.model('User', UserSchema);
 
-export default User;
+module.exports = User;
+//export default User;

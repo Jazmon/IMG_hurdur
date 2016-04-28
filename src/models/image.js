@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
 const ImageSchema = new mongoose.Schema({
   created: {
@@ -17,8 +17,8 @@ const ImageSchema = new mongoose.Schema({
   },
   description: String,
   likes: [{
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Like'
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Like'
   }],
   mentions: [{
     type: mongoose.Schema.Types.ObjectId,
@@ -32,8 +32,10 @@ const ImageSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Comment'
   }],
-}, { strict: true });
+}, {
+  strict: true
+});
 
 const Image = mongoose.model('Image', ImageSchema);
 
-export default Image;
+module.exports = Image;
