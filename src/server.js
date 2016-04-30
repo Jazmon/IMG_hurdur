@@ -2,7 +2,6 @@ const path = require('path');
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
-const expressJwt = require('express-jwt');
 const PrettyError = require('pretty-error');
 const logger = require('morgan');
 const favicon = require('serve-favicon');
@@ -12,15 +11,12 @@ const compression = require('compression');
 const exphbs = require('express-handlebars');
 const session = require('express-session');
 const passport = require('passport');
-const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 
 const {
   port,
   ip,
-  auth,
 } = require('./config');
-
 
 function haltOnTimedout(req, res, next) {
   if (!req.timedout) next();
@@ -41,14 +37,12 @@ app.set('views', viewsDir);
 app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
 
-
 //
 // Register server middleware
 // ========================================================
 app.use(timeout('5s'));
 app.use(cookieParser());
 app.use(haltOnTimedout);
-//app.use();
 app.use(logger('combined'));
 app.use(haltOnTimedout);
 app.use(compression());
@@ -82,9 +76,8 @@ app.use(haltOnTimedout);
 // ========================================================
 require('./passport')(passport);
 
-
 //
-// error handling
+// Error handling
 // ========================================================
 const pe = new PrettyError();
 pe.skipNodeFiles();
@@ -93,9 +86,9 @@ pe.start();
 
 
 // Set to print output html from jade prettily https://stackoverflow.com/a/11812841
-if (app.get('env') === 'development') {
+/*if (app.get('env') === 'development') {
   app.locals.pretty = true;
-}
+}*/
 
 // Development error handler, will print stacktrace
 if (app.get('env') === 'development') {
@@ -118,6 +111,7 @@ app.use(function(err, req, res, next) {
 });
 
 require('./routes/index')(app, passport);
+
 /* eslint-disable no-console */
 console.log(`
   Server started!

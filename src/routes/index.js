@@ -1,10 +1,6 @@
-// Utils
 const mv = require('mv');
 const del = require('del');
 const path = require('path');
-const { auth } = require('../config');
-const expressJwt = require('express-jwt');
-
 const multipart = require('connect-multiparty');
 const shortid = require('shortid');
 
@@ -13,7 +9,6 @@ const multipartMiddleware = multipart();
 const Image = require('../models/image');
 
 module.exports = (app, passport) => {
-  //const routes = (app, passport) => {
 
   app.get('/', (req, res) => {
     res.render('home', {
@@ -44,11 +39,9 @@ module.exports = (app, passport) => {
     failureFlash: true
   }));
 
-  // ayyyyy lmao
-  const apiRoutes = require('./api')();
-  app.use('/api', apiRoutes);
-
+  app.use('/api', require('./api'));
   app.use('/auth', require('./auth')(passport));
+
   app.post('/upload', multipartMiddleware, (req, res) => {
     // TODO check types, image size, filename, csrf
     let filename = req.files.file.name;

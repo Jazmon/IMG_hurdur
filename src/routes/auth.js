@@ -1,7 +1,6 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const { auth } = require('../config');
-const expressJwt = require('express-jwt');
 
 const router = express.Router();
 
