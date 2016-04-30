@@ -2,23 +2,15 @@
 const mv = require('mv');
 const del = require('del');
 const path = require('path');
+const { auth } = require('../config');
+const expressJwt = require('express-jwt');
 
 const multipart = require('connect-multiparty');
-const express = require('express');
 const shortid = require('shortid');
 
-const router = express.Router();
 const multipartMiddleware = multipart();
 
-
-
-// Models
-//const Comment = require('./models/comment');
-const Hashtag = require('../models/hashtag');
 const Image = require('../models/image');
-//const Like = require('./models/like');
-//const Mention = require('./models/mention');
-//const User = require('./models/user');
 
 module.exports = (app, passport) => {
   //const routes = (app, passport) => {
@@ -34,25 +26,6 @@ module.exports = (app, passport) => {
       message: req.flash('loginMessage')
     });
   });
-
-  /*app.get('/signup', (req, res) => {
-    res.render('signup', {
-      message: req.flash('signupMessage')
-    });
-  });*/
-
-  /*const isLoggedIn = (req, res, next) => {
-    if (req.isAuthenticated()) {
-      return next();
-    }
-    res.redirect('/');
-  };*/
-
-  /*app.get('/profile', isLoggedIn, (req, res) => {
-    res.render('profile', {
-      user: req.user
-    });
-  });*/
 
   app.get('/logout', (req, res) => {
     req.logout();
@@ -71,31 +44,11 @@ module.exports = (app, passport) => {
     failureFlash: true
   }));
 
-  router.route('/hashtag')
-    .get((req, res) => {
-      Hashtag.find((err, hashtags) => {
-        if (err) {
-          res.send(err);
-        }
-        res.send(hashtags);
-      });
-    });
+  // ayyyyy lmao
+  const apiRoutes = require('./api')();
+  app.use('/api', apiRoutes);
 
-  router.route('/image')
-    .get((req, res) => {
-      Image.find((err, images) => {
-        if (err) {
-          res.status(500)
-            .send(err);
-        } else {
-          res.send(images);
-        }
-      });
-    })
-    .post();
-
-  app.use('/api', router);
-
+  app.use('/auth', require('./auth')(passport));
   app.post('/upload', multipartMiddleware, (req, res) => {
     // TODO check types, image size, filename, csrf
     let filename = req.files.file.name;
