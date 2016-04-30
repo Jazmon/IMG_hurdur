@@ -12,9 +12,35 @@ const authenticate = expressJwt({
   getToken: req => req.cookies.id_token
 });*/
 
+const getToken = (req) => {
+  if(req.headers.authorization &&
+      req.headers.authorization.split(' ')[0] == 'Bearer') {
+    return req.headers.authorization.split(' ')[1];
+  } else if (req.query && req.query.token) {
+    return req.query.token;
+  } else if(req.body && req.body.token) {
+    return req.body.token;
+  }
+  return null;
+};
+
+router.use(expressJwt({
+  secret: auth.jwt.secret,
+  credentialsRequired: false,
+  getToken: getToken
+}), (req, res, next) => {
+  if(!req.user ) {
+    res.status(403).send({
+      success: false,
+      message: 'Unauthorized.'
+    });
+  } else {
+    next();
+  }
+});
+/*
 router.use((req, res, next) => {
-  const token = req.body.token || req.query.token
-      || req.headers['x-access-token'];
+  let token = getToken(req);
   if(token) {
     jwt.verify(token, auth.jwt.secret, (err, decoded) => {
       if(err) {
@@ -30,7 +56,7 @@ router.use((req, res, next) => {
       message: 'no token provided.'
     });
   }
-});
+});*/
 /*expressJwt({
   secret: auth.jwt.secret,
   credentialsRequired: false,
