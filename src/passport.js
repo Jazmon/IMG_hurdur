@@ -1,4 +1,5 @@
-const LocalStrategy = require('passport-local').Strategy;
+const LocalStrategy = require('passport-local')
+  .Strategy;
 const User = require('./models/user');
 
 function passportConfig(passport) {
@@ -25,7 +26,7 @@ function passportConfig(passport) {
   // by default, if there was no name, it would just be called 'local'
 
   passport.use('local-signup', new LocalStrategy({
-    // by default, local strategy uses username and password, we will override with email
+      // by default, local strategy uses username and password, we will override with email
     usernameField: 'email',
     passwordField: 'password',
     passReqToCallback: true // allows us to pass back the entire request to the callback
@@ -74,22 +75,26 @@ function passportConfig(passport) {
     passwordField: 'password',
     passReqToCallback: true
   },
-  (req, email, password, done) => {
-    User.findOne({'local.email': email}, (err, user) => {
-      if(err) {
-        return done(err);
-      }
-      if(!user) {
-        return done(null, false, req.flash('loginMessage', 'No user found.'));
-      }
-      if(!user.isValidPassword(password)) {
-        return done(null, false, req.flash('loginMessage', 'Oops! Wrong password!'));
-      }
-      return done(null, user);
-    });
-  }
+    (req, email, password, done) => {
+      User.findOne({
+        'local.email': email
+      }, (err, user) => {
+        if (err) {
+          return done(err);
+        }
+        if (!user) {
+          return done(null, false, req.flash('loginMessage',
+            'No user found.'));
+        }
+        if (!user.isValidPassword(password)) {
+          return done(null, false, req.flash('loginMessage',
+            'Oops! Wrong password!'));
+        }
+        return done(null, user);
+      });
+    }
 
-));
+  ));
 
 }
 

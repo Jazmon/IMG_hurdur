@@ -1,12 +1,8 @@
-const mv = require('mv');
-const del = require('del');
 const path = require('path');
 const multipart = require('connect-multiparty');
-const shortid = require('shortid');
-
-const multipartMiddleware = multipart();
-
+const utils = require('../utils');
 const Image = require('../models/image');
+const multipartMiddleware = multipart();
 
 module.exports = (app, passport) => {
 
@@ -20,6 +16,43 @@ module.exports = (app, passport) => {
     res.render('signin', {
       message: req.flash('loginMessage')
     });
+  });
+
+  app.get('/form', (req, res) => {
+    res.render('uploadform', {
+
+    });
+  });
+  app.post('/form', multipartMiddleware, (req, res) => {
+    // TODO check types, image size, filename, csrf
+    let filename = req.files.file.name;
+    if (!utils.isFilenameImage(filename)) {
+      return res.status(403)
+        .json({
+          success: false,
+          message: 'invalid file'
+        });
+    }
+
+    filename = utils.uniquefyImageFilename(filename);
+    utils.moveFile(req.files.file.path, path.join(__dirname,
+      '/mediaroot/uploads/' + filename), {
+        mkdirp: true
+      }, (err) => {
+        if (err) {
+          res.send(err);
+        }
+      });
+
+    let img = new Image({
+      title: 'Cool pic',
+      description: 'Foo bar baz',
+      uploadPath: filename
+    });
+
+    utils.deleteRequestFiles(req);
+    img.save();
+    res.redirect('/form');
   });
 
   app.get('/logout', (req, res) => {
@@ -41,53 +74,4 @@ module.exports = (app, passport) => {
 
   app.use('/api', require('./api'));
   app.use('/auth', require('./auth')(passport));
-
-  app.post('/upload', multipartMiddleware, (req, res) => {
-    // TODO check types, image size, filename, csrf
-    let filename = req.files.file.name;
-    if (!filename.match(/([a-zA-Z0-9\.\-\_]{1,20})(\.)(png|jp(e)?g|gif)$/)) {
-      res.status(403)
-        .json({
-          success: false,
-          message: 'invalid file'
-        });
-      return;
-    }
-
-    const extension = filename.split(/(png|jp(e)?g|gif)$/)[1];
-    filename =
-      `${filename.substr(0, filename.length  - 1 - extension.length)}` +
-      `_${shortid.generate()}.${extension}`;
-
-    mv(req.files.file.path,
-      path.join(__dirname, '/mediaroot/uploads/' + filename), {
-        mkdirp: true
-      }, (err) => {
-        if (err) {
-          res.send(err);
-        }
-      });
-
-    let img = new Image({
-      title: 'Cool pic',
-      description: 'Foo bar baz',
-      uploadPath: filename
-    });
-
-    del([req.files.file.path])
-      .then(paths => {
-        /* eslint-disable no-console */
-        console.log('Deleted files and folders:\n',
-          paths.join('\n'));
-        /* eslint-enable no-console */
-      });
-    delete req.files;
-    req.files = null;
-
-    img.save();
-    res.json(img);
-
-  });
 };
-
-// default routes;
