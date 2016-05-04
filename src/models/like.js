@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
 const LikeSchema = new mongoose.Schema({
   created: {
@@ -13,8 +13,10 @@ const LikeSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   },
-}, { strict: true });
+}, {
+  strict: true
+});
 
 const Like = mongoose.model('Like', LikeSchema);
 
-export default Like;
+module.exports = Like;

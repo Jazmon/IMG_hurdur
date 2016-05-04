@@ -6,13 +6,13 @@
   ],
   "verbose": true,
   "execMap": {
-    "js": "node --harmony"
+    "js": "node"
   },
   "events": {
     "restart": "echo -e \"App restarted due to:\n'$FILENAME'\" with title \"nodemon\""
   },
   "watch": [
-    "src/server/"
+    "src/"
   ],
   "env": {
     "NODE_ENV": "development"

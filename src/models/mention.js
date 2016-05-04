@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
 const MentionSchema = new mongoose.Schema({
   created: {
@@ -13,8 +13,10 @@ const MentionSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   },
-}, { strict: true });
+}, {
+  strict: true
+});
 
 const Mention = mongoose.model('Mention', MentionSchema);
 
-export default Mention;
+module.exports = Mention;

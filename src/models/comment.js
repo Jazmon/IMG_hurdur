@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
 const CommentSchema = new mongoose.Schema({
   created: {
@@ -15,8 +15,8 @@ const CommentSchema = new mongoose.Schema({
     ref: 'User'
   },
   likes: [{
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Like'
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Like'
   }],
   mentions: [{
     type: mongoose.Schema.Types.ObjectId,
@@ -30,8 +30,10 @@ const CommentSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Comment'
   }],
-}, { strict: true });
+}, {
+  strict: true
+});
 
 const Comment = mongoose.model('Comment', CommentSchema);
 
-export default Comment;
+module.exports = Comment;
