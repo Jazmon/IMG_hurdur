@@ -35,7 +35,8 @@ module.exports = (app, passport) => {
     }
 
     filename = utils.uniquefyImageFilename(filename);
-    utils.moveFile(req.files.file.path, path.join(__dirname,
+
+    utils.moveFile(req.files.file.path, path.join(__dirname, '..',
       '/mediaroot/uploads/' + filename), {
         mkdirp: true
       }, (err) => {

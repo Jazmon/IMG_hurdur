@@ -158,7 +158,7 @@ router.route('/upload')
     }
 
     filename = utils.uniquefyImageFilename(filename);
-    utils.moveFile(req.files.file.path, path.join(__dirname,
+    utils.moveFile(req.files.file.path, path.join(__dirname, '..',
       '/mediaroot/uploads/' + filename), {
         mkdirp: true
       }, (err) => {
