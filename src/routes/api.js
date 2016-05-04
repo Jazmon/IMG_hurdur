@@ -102,6 +102,7 @@ router.route('/hashtag/:tag')
       }
     });
   });
+
 router.route('/image')
   .get((req, res) => {
     Image.find((err, images) => {
@@ -114,6 +115,7 @@ router.route('/image')
     });
   })
   .post();
+
 router.route('/image/:id([a-zA-Z0-9\-]+)')
   .get((req, res) => {
     Image.findOne(utils.makeOIdQuery(req.params.id), 'title description comments hashtags uploadPath mentions likes created', (err, image) => {
@@ -124,6 +126,7 @@ router.route('/image/:id([a-zA-Z0-9\-]+)')
       }
     });
   });
+
 router.route('/image/:id([a-zA-Z0-9\-]+)/comment')
   .post((req, res) => {
     Image.findOne(utils.makeOIdQuery(req.params.id), (err, image) => {
@@ -139,6 +142,7 @@ router.route('/image/:id([a-zA-Z0-9\-]+)/comment')
       }
     });
   });
+
 router.route('/upload')
   .post(multipartMiddleware, (req, res) => {
     // TODO check image types, image size, filename, csrf

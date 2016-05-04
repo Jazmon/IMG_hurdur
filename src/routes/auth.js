@@ -27,10 +27,10 @@ module.exports = (passport) => {
         const token = jwt.sign(req.user, auth.jwt.secret, {
           expiresIn
         });
-        res.cookie('id_token', token, {
+        /*res.cookie('id_token', token, {
           maxAge: 1000 * expiresIn,
           httpOnly: true
-        });
+        });*/
         res.send({
           success: true,
           token,
