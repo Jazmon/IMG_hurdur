@@ -48,14 +48,6 @@ router.use(expressJwt({
     next();
   }
 });
-
-router.route('/')
-  .get((req, res) => {
-    res.json({
-      hello: 'world!'
-    });
-  });
-
 // Route for user profiles
 router.route('/user/:id([a-zA-Z0-9\-]+)')
   .get((req, res) => {
@@ -68,17 +60,51 @@ router.route('/user/:id([a-zA-Z0-9\-]+)')
         }
       });
   });
-
 router.route('/me')
   .get((req, res) => {
     res.status(200)
       .json({
-        foo: 'bar',
         user: req.user || 'baz'
       });
   });
+router.route('/hashtags')
+  .get((req, res) => {
+    Hashtag.find((err, hashtags) => {
+      if ( err) {
+        res.send(err);
+      }
+      else {
+        res.send(hashtags);
+      }
+    });
+  })
+  .post((req, res) => {
+    const {hashtag} = req.body;
+    if(!hashtag || !hashtag.match(/([\.\-\\\/\:\ \?\@\,\;\&\%\$\€\<\>\"\'\`\´\¨\~\(\)\{\}\[\]\^\|\*\+\-])\w+/)) {
+      return res.status(400).send({error: 'invalid hashtag'});
+    }
 
-// if no query, return a list of hashtags?
+    Hashtag.findOne({text: hashtag}, (err, hashtag) => {
+      if(err) {
+        return res.send(err);
+      }
+      if(hashtag) {
+        return res.send({error: 'the hashtag already exists'});
+      }
+      const newHashtag = new Hashtag({
+        text: hashtag
+      });
+      newHashtag.save();
+      return res.send(newHashtag);
+    });
+  });
+router.route('/images');
+router.route('/images/:id');
+router.route('/images/:id/comments');
+router.route('/images/:id/comments');
+router.route('/images/:id/likes');
+router.route('/users/:id/images');
+router.route('/users/:id/images/:id');
 router.route('/hashtag')
   .get((req, res) => {
     Hashtag.find((err, hashtags) => {
@@ -88,7 +114,6 @@ router.route('/hashtag')
       res.send(hashtags);
     });
   });
-
 router.route('/hashtag/:tag')
   .get((req, res) => {
     // if query with a hashtag, return images tagged with it
@@ -102,7 +127,6 @@ router.route('/hashtag/:tag')
       }
     });
   });
-
 router.route('/image')
   .get((req, res) => {
     Image.find((err, images) => {
@@ -115,7 +139,6 @@ router.route('/image')
     });
   })
   .post();
-
 router.route('/image/:id([a-zA-Z0-9\-]+)')
   .get((req, res) => {
     Image.findOne(utils.makeOIdQuery(req.params.id), 'title description comments hashtags uploadPath mentions likes created', (err, image) => {
@@ -126,7 +149,6 @@ router.route('/image/:id([a-zA-Z0-9\-]+)')
       }
     });
   });
-
 router.route('/image/:id([a-zA-Z0-9\-]+)/comment')
   .post((req, res) => {
     Image.findOne(utils.makeOIdQuery(req.params.id), (err, image) => {
@@ -142,7 +164,6 @@ router.route('/image/:id([a-zA-Z0-9\-]+)/comment')
       }
     });
   });
-
 router.route('/upload')
   .post(multipartMiddleware, (req, res) => {
     // TODO check image types, image size, filename, csrf
