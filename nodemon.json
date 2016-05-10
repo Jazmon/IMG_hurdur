@@ -8,9 +8,6 @@
   "execMap": {
     "js": "node"
   },
-  "events": {
-    "restart": "echo -e \"App restarted due to:\n'$FILENAME'\" with title \"nodemon\""
-  },
   "watch": [
     "src/"
   ],

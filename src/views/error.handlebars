@@ -18,7 +18,21 @@
     <![endif]-->
   </head>
   <body>
-    <h1>ERROR PLS FIX UR STUPED</h1>
+    <main class="content">
+      <div class="jumbotron">
+        <div class="container">
+          <h1>Error {{statusCode}}</h1>
+          <h2>Message: {{message}}</h2>
+          {{#if stack}}
+            <h2>Stack:</h2>
+            <pre style="font-family: 'Roboto Mono', 'Consolas', monospace;">
+              err.message
+            </pre>
+          {{/if}}
+        </div>
+      </div>
+    </main>
+
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->

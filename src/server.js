@@ -11,7 +11,6 @@ const compression = require('compression');
 const exphbs = require('express-handlebars');
 const session = require('express-session');
 const passport = require('passport');
-const mongoose = require('mongoose');
 
 const {
   port,
@@ -26,8 +25,11 @@ function haltOnTimedout(req, res, next) {
 // Create the app
 // ========================================================
 const app = express();
-mongoose.connect('mongodb://localhost/imghurdur');
 
+
+//
+// View engine setup
+// ========================================================
 const viewsDir = path.join(__dirname, '/views');
 const hbs = exphbs.create({
   defaultLayout: 'main',
@@ -76,6 +78,12 @@ app.use(haltOnTimedout);
 // ========================================================
 require('./passport')(passport);
 
+
+//
+// Routes
+// ========================================================
+require('./routes/index')(app, passport);
+
 //
 // Error handling
 // ========================================================
@@ -84,33 +92,28 @@ pe.skipNodeFiles();
 pe.skipPackage('express');
 pe.start();
 
-
 // Set to print output html from jade prettily https://stackoverflow.com/a/11812841
-/*if (app.get('env') === 'development') {
-  app.locals.pretty = true;
-}*/
+app.locals.pretty = process.env.NODE_ENV === 'development' ? true : false;
 
-// Development error handler, will print stacktrace
-if (app.get('env') === 'development') {
-  app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.render('error', {
-      message: err.message,
-      error: err
-    });
-  });
-}
-
-// production error handler, no stacktraces leaked to user
-app.use(function(err, req, res, next) {
-  res.status(err.status || 500);
-  res.render('error', {
-    message: err.message,
-    error: {}
-  });
+// catch 404 and throw it forward as error
+app.use((req, res, next) => {
+  const err = new Error('Not Found');
+  err.status = 404;
+  next(err);
 });
 
-require('./routes/index')(app, passport);
+app.use(function(err, req, res, next) { // eslint-disable-line no-unused-vars
+  console.log(pe.render(err)); // eslint-disable-line no-console
+  const template = require('./views/error.handlebars');
+  const statusCode = err.status || 500;
+  res.status(statusCode);
+  res.send(template({
+    statusCode,
+    message: err.message,
+    stack: process.env.NODE_ENV === 'production' ? '' : err.stack,
+  }));
+});
+
 
 /* eslint-disable no-console */
 console.log(`
