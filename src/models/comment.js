@@ -1,5 +1,27 @@
-const mongoose = require('mongoose');
+const DataTypes = require('sequelize').DataTypes;
+const sequelize = require('../sequelize');
 
+const Comment = sequelize.define('comment', {
+  text: {
+    type: DataTypes.STRING,
+    field: 'text',
+  },
+}, {
+  classMethods: {
+    associate: (models) => {
+      Comment.belongsTo(models.User, {as: 'commenter'});
+      //Comment.hasMany(models.Hashtag, {as: 'hashtags'});
+      // Comment.hasMany(models.Hashtag, {as: 'mentions'});
+      Comment.hasMany(models.Like, {as: 'likes'});
+      // Comment.hasMany(models.Mention, {as: 'mentions'});
+      // Comment.hasMany(models.Comment, {as: 'comments'});
+    }
+  }
+});
+
+module.exports = Comment;
+
+/*
 const CommentSchema = new mongoose.Schema({
   created: {
     type: Date,
@@ -37,3 +59,4 @@ const CommentSchema = new mongoose.Schema({
 const Comment = mongoose.model('Comment', CommentSchema);
 
 module.exports = Comment;
+*/

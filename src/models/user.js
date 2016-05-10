@@ -1,6 +1,91 @@
-const mongoose = require('mongoose');
+const DataTypes = require('sequelize').DataTypes;
+const sequelize = require('../sequelize');
 const bcrypt = require('bcryptjs');
+const config = require('../config');
 
+// NOTE: bcrypt stores salt in the hash
+// https://stackoverflow.com/q/13023361/5965327
+
+const User = sequelize.define('user', {
+  email: {
+    type: DataTypes.STRING,
+    field: 'email',
+    unique: true,
+    validate: {
+      isEmail: true,
+      notNull: true,
+      notEmpty: true,
+    }
+  },
+  superUser: {
+    type: DataTypes.BOOLEAN,
+    field: 'super_user',
+    defaultValue: false,
+    validate: {
+      notNull: true
+    },
+  },
+  username: {
+    type: DataTypes.STRING,
+    field: 'username',
+  },
+  passwordHash: {
+    type: DataTypes.STRING,
+    field: 'password',
+    set: (val) => {
+      bcrypt.genSalt(config.saltWorkFactor, (err, salt) => {
+        if(err) throw err;
+        bcrypt.hash(val, salt, (err, hash) => {
+          if(err) throw err;
+          this.setDataValue('passwordHash', hash);
+        });
+      });
+    }
+  },
+  password: {
+    type: DataTypes.VIRTUAL,
+    set: (val) => {
+      this.setDataValue('password', val);
+      this.setDataValue('passwordHash', val);
+    },
+    validate: {
+      notNull: true,
+      notEmpty: true,
+      len: [config.passwordMinLength, config.passwordMaxLength],
+    }
+  },
+  name: {
+    type: DataTypes.STRING,
+    field: 'name',
+    validate: {
+      isAlpha: true,
+    }
+  },
+  description: {
+    type: DataTypes.STRING,
+    field: 'description',
+
+  },
+}, {
+  classMethods: {
+    validPassword: (password, hash) => {
+      bcrypt.compare(password, hash, (err, res) => {
+        if(err) throw err;
+        return res;
+      });
+    },
+    associate: (models) => {
+      User.hasMany(models.User, {as: 'followers'});
+      User.hasMany(models.User, {as: 'following'});
+      User.hasMany(models.Image, {as: 'images'});
+      //User.hasMany(models.Comment, {as: 'profile_comments'});
+
+    }
+  }
+});
+
+module.exports = User;
+/*
 const UserSchema = new mongoose.Schema({
   local: {
     email: String,
@@ -71,4 +156,4 @@ UserSchema.methods.isValidPassword = function(password) {
 const User = mongoose.model('User', UserSchema);
 
 module.exports = User;
-//export default User;
+//export default User;*/

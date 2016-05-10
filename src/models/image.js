@@ -1,5 +1,27 @@
-const mongoose = require('mongoose');
+const DataTypes = require('sequelize').DataTypes;
+const sequelize = require('../sequelize');
 
+const Image = sequelize.define('image', {
+  uploadPath: {
+    type: DataTypes.STRING,
+    field: 'upload_path',
+  },
+  title: {
+    type: DataTypes.STRING,
+    field: 'title',
+  },
+  description: {
+    type: DataTypes.TEXT,
+    field: 'description',
+  },
+}, {
+  classMethods: {
+    
+  }
+});
+module.exports = Image;
+
+/*
 const ImageSchema = new mongoose.Schema({
   created: {
     type: Date,
@@ -39,3 +61,4 @@ const ImageSchema = new mongoose.Schema({
 const Image = mongoose.model('Image', ImageSchema);
 
 module.exports = Image;
+*/
