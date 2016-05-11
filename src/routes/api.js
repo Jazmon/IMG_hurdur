@@ -36,14 +36,21 @@ router.use(expressJwt({
   secret: auth.jwt.secret,
   credentialsRequired: false,
   getToken: getToken
-}), (req, res, next) => {
+})/*,(req, res, next) => {
+
+  console.log(`req.user: ${req.user}`);
+  for(let key in req.user) {
+    console.log(`${key}: "${req.user[key]}"`);
+  }
+
+  next();
+}*/, (req, res, next) => {
   if (!req.user) {
-    /*res.status(403)
+    return res.status(403)
       .send({
         success: false,
         message: 'Unauthorized.'
-      });*/
-    next();
+      });
   } else {
     next();
   }
@@ -70,26 +77,36 @@ router.route('/me')
 router.route('/hashtags')
   .get((req, res) => {
     Hashtag.find((err, hashtags) => {
-      if ( err) {
+      if (err) {
         res.send(err);
-      }
-      else {
+      } else {
         res.send(hashtags);
       }
     });
   })
   .post((req, res) => {
-    const {hashtag} = req.body;
-    if(!hashtag || !hashtag.match(/([\.\-\\\/\:\ \?\@\,\;\&\%\$\€\<\>\"\'\`\´\¨\~\(\)\{\}\[\]\^\|\*\+\-])\w+/)) {
-      return res.status(400).send({error: 'invalid hashtag'});
+    const {
+      hashtag
+    } = req.body;
+    if (!hashtag || !hashtag.match(
+        /([\.\-\\\/\:\ \?\@\,\;\&\%\$\€\<\>\"\'\`\´\¨\~\(\)\{\}\[\]\^\|\*\+\-])\w+/
+      )) {
+      return res.status(400)
+        .send({
+          error: 'invalid hashtag'
+        });
     }
 
-    Hashtag.findOne({text: hashtag}, (err, hashtag) => {
-      if(err) {
+    Hashtag.findOne({
+      text: hashtag
+    }, (err, hashtag) => {
+      if (err) {
         return res.send(err);
       }
-      if(hashtag) {
-        return res.send({error: 'the hashtag already exists'});
+      if (hashtag) {
+        return res.send({
+          error: 'the hashtag already exists'
+        });
       }
       const newHashtag = new Hashtag({
         text: hashtag
@@ -117,8 +134,10 @@ router.route('/hashtag')
 router.route('/hashtag/:tag')
   .get((req, res) => {
     // if query with a hashtag, return images tagged with it
-    Hashtag.findOne({text: req.params.tag}, (err, hashtag) => {
-      if(err) {
+    Hashtag.findOne({
+      text: req.params.tag
+    }, (err, hashtag) => {
+      if (err) {
         res.send(err);
       } else {
         // we got hashtag, get all images that contain it
@@ -129,39 +148,33 @@ router.route('/hashtag/:tag')
   });
 router.route('/image')
   .get((req, res) => {
-    Image.find((err, images) => {
-      if (err) {
-        res.status(500)
-          .send(err);
-      } else {
-        res.send(images);
-      }
+    Image.find({}, 'title description comments hashtags uploadPath mentions likes created').populate('comments').exec((err, images) => {
+      if (err) throw err;
+      res.send(images);
     });
   })
   .post();
 router.route('/image/:id([a-zA-Z0-9\-]+)')
   .get((req, res) => {
-    Image.findOne(utils.makeOIdQuery(req.params.id), 'title description comments hashtags uploadPath mentions likes created', (err, image) => {
-      if (err) {
-        res.send(err);
-      } else {
+    Image.findOne(utils.makeOIdQuery(req.params.id),
+      (err, image) => {
+        if (err) throw err;
         res.json(image);
-      }
-    });
+      });
   });
 router.route('/image/:id([a-zA-Z0-9\-]+)/comment')
   .post((req, res) => {
     Image.findOne(utils.makeOIdQuery(req.params.id), (err, image) => {
-      if(err) {
-        res.send(err);
-      } else {
-        const comment = new Comment({
-          commenter: req.user,
-          text: req.body.text
-        }).save();
-        image.comments.push(comment);
-        image.save();
-      }
+      if (err) throw err;
+      req.token;
+      const comment = new Comment({
+        commenter: req.user,
+        text: req.body.text
+      })
+        .save();
+      image.comments.push(comment);
+      image.save();
+      res.send(comment);
     });
   });
 router.route('/upload')
@@ -169,6 +182,8 @@ router.route('/upload')
     // TODO check image types, image size, filename, csrf
     // maybe some kind of token auth here as well so we can have actual
     // trust between the client & server.
+    console.log(`title: ${req.body.title}`);
+    console.log(`description: ${req.body.description}`);
     let filename = req.files.file.name;
     if (!utils.isFilenameImage(filename)) {
       return res.status(403)
@@ -189,8 +204,8 @@ router.route('/upload')
       });
 
     let img = new Image({
-      title: 'Cool pic',
-      description: 'Foo bar baz',
+      title: req.body.title || 'No title',
+      description: req.body.description || 'No description.',
       uploadPath: filename
     });
 
