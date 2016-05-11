@@ -157,6 +157,7 @@ router.route('/image')
 router.route('/image/:id([a-zA-Z0-9\-]+)')
   .get((req, res) => {
     Image.findOne(utils.makeOIdQuery(req.params.id),
+      'title description comments hashtags uploadPath mentions likes created').populate('comments').exec(
       (err, image) => {
         if (err) throw err;
         res.json(image);
