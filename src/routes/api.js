@@ -52,6 +52,7 @@ router.use(expressJwt({
         message: 'Unauthorized.'
       });
   } else {
+    //console.log(JSON.stringify(req.user));
     next();
   }
 });
@@ -167,15 +168,16 @@ router.route('/image/:id([a-zA-Z0-9\-]+)/comment')
   .post((req, res) => {
     Image.findOne(utils.makeOIdQuery(req.params.id), (err, image) => {
       if (err) throw err;
-      req.token;
-      const comment = new Comment({
-        commenter: req.user,
-        text: req.body.text
-      })
-        .save();
-      image.comments.push(comment);
-      image.save();
-      res.send(comment);
+      Comment.create({commenter: req.user['_id'], text: req.body.text}, (err, comment) => {
+        if(err) throw err;
+
+        image.comments.push(comment['_id']);
+        image.save((err) => {
+          if(err) throw err;
+          res.send(image);
+        });
+      });
+
     });
   });
 router.route('/upload')
