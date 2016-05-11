@@ -4,11 +4,9 @@
     "browser"
   ],
   "loadEagerly": [
-    "path/to/your/js/**/*.js"
+    "src/**/*.js"
   ],
-  "dontLoad": [
-    "path/to/your/js/**/*.js"
-  ],
+  "dontLoad": [],
   "plugins": {
     "complete_strings": {},
     "node": {},
