@@ -76,6 +76,7 @@ app.use(haltOnTimedout);
 // ========================================================
 require('./passport')(passport);
 
+require('./routes/index')(app, passport);
 //
 // Error handling
 // ========================================================
@@ -84,33 +85,16 @@ pe.skipNodeFiles();
 pe.skipPackage('express');
 pe.start();
 
-
 // Set to print output html from jade prettily https://stackoverflow.com/a/11812841
-/*if (app.get('env') === 'development') {
-  app.locals.pretty = true;
-}*/
+app.locals.pretty = app.get('env') === 'development';
 
-// Development error handler, will print stacktrace
-if (app.get('env') === 'development') {
-  app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.render('error', {
-      message: err.message,
-      error: err
-    });
-  });
-}
-
-// production error handler, no stacktraces leaked to user
-app.use(function(err, req, res, next) {
+app.use(function(err, req, res, next) { // eslint-disable-line no-unused-vars
   res.status(err.status || 500);
   res.render('error', {
     message: err.message,
-    error: {}
+    error: app.get('env') === 'development' ? err : {}
   });
 });
-
-require('./routes/index')(app, passport);
 
 /* eslint-disable no-console */
 console.log(`
