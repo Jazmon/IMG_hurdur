@@ -1,0 +1,13 @@
+#!/usr/bin/env node
+
+const debug = require('debug')('img_hurdur');
+const app = require('../app');
+const models = require('../models');
+
+app.set('port', process.env.PORT || 8000);
+
+models.sequelize.sync().then(() => {
+  const server = app.listen(app.get('port'), () => {
+    debug(`Server listening on port ${server.address().port}`);
+  });
+});

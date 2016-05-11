@@ -1,5 +1,17 @@
-const mongoose = require('mongoose');
+module.exports = (sequelize, DataTypes) => {
+  const Hashtag = sequelize.define('hashtag', {
+    text: {
+      type: DataTypes.STRING
+    }
+  }, {
+    /*associate: (models) => {
 
+    }*/
+  });
+  return Hashtag;
+};
+
+/*
 const HashtagSchema = new mongoose.Schema({
   created: {
     type: Date,
@@ -17,3 +29,4 @@ const HashtagSchema = new mongoose.Schema({
 const Hashtag = mongoose.model('Hashtag', HashtagSchema);
 
 module.exports = Hashtag;
+*/

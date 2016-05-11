@@ -5,10 +5,10 @@ const ip = '0.0.0.0';
 
 const databaseUrl = 'localhost:5432';
 const database = {
-  url : 'localhost:5432',
-  name: 'postgres',
-  user: 'postgres',
-  password: '18rWiF'
+  host : 'localhost:5432',
+  name: 'atte',
+  user: 'atte',
+  password: ''
 };
 
 const passwordMinLength = 10;

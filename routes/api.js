@@ -13,12 +13,13 @@ const multipartMiddleware = multipart();
 //
 // Models
 // ==============================================
-const Hashtag = require('../models/hashtag');
-const Image = require('../models/image');
+const models = require('../models');
+//const Hashtag = require('../models/hashtag');
+//const Image = require('../models/image');
 //const Like = require('../models/like');
 //const Mention = require('../models/mention');
-const User = require('../models/user');
-const Comment = require('../models/comment');
+//const User = require('../models/user');
+//const Comment = require('../models/comment');
 
 const getToken = (req) => {
   if (req.headers.authorization &&
@@ -48,8 +49,16 @@ router.use(expressJwt({
     next();
   }
 });
+
+router.get('/', (req, res) => {
+  models.User.findAll({
+    include: [models.Comment, models.Image, models.User]
+  }).then((users) => {
+    res.send(users);
+  });
+});
 // Route for user profiles
-router.route('/user/:id([a-zA-Z0-9\-]+)')
+/*router.route('/user/:id([a-zA-Z0-9\-]+)')
   .get((req, res) => {
     User.findOne(utils.makeOIdQuery(req.params.id),
       'following followers comments images', (err, user) => {
@@ -98,7 +107,17 @@ router.route('/hashtags')
       return res.send(newHashtag);
     });
   });
-router.route('/images');
+router.route('/images')
+  .get((req, res) => {
+
+  })
+  .post((req, res) => {
+    Image.create({
+      uploadPath: '',
+      title: '',
+      description: '',
+    })
+  });
 router.route('/images/:id');
 router.route('/images/:id/comments');
 router.route('/images/:id/comments');
@@ -197,6 +216,6 @@ router.route('/upload')
     utils.deleteRequestFiles(req);
     img.save();
     res.json(img);
-  });
+  });*/
 
 module.exports = router;

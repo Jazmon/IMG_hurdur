@@ -1,5 +1,18 @@
-const mongoose = require('mongoose');
+module.exports = (sequelize, DataTypes) => {
+  const Like = sequelize.define('like', {
+    weight: {
+      type: DataTypes.INTEGER,
+      field: 'weight'
+    }
+  }, {
+    associate: (models) => {
+      //Like.belongsTo(models.User);
+    }
+  });
+  return Like;
+};
 
+/*
 const LikeSchema = new mongoose.Schema({
   created: {
     type: Date,
@@ -19,4 +32,4 @@ const LikeSchema = new mongoose.Schema({
 
 const Like = mongoose.model('Like', LikeSchema);
 
-module.exports = Like;
+module.exports = Like;*/

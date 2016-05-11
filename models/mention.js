@@ -1,5 +1,16 @@
-const mongoose = require('mongoose');
+module.exports = (sequelize, DataTypes) => { // eslint-disable-line no-unused-vars
+  const Mention = sequelize.define('mention', {
 
+  }, {
+    associate: (models) => {
+      /*Mention.hasOne(models.User, {as: 'mentioner'});
+      Mention.hasOne(models.User, {as: 'mentioned_user'});*/
+    }
+  });
+  return Mention;
+};
+
+/*
 const MentionSchema = new mongoose.Schema({
   created: {
     type: Date,
@@ -20,3 +31,4 @@ const MentionSchema = new mongoose.Schema({
 const Mention = mongoose.model('Mention', MentionSchema);
 
 module.exports = Mention;
+*/

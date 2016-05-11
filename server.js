@@ -11,11 +11,11 @@ const compression = require('compression');
 const exphbs = require('express-handlebars');
 const session = require('express-session');
 const passport = require('passport');
-
+/*
 const {
   port,
   ip,
-} = require('./config');
+} = require('./config');*/
 
 function haltOnTimedout(req, res, next) {
   if (!req.timedout) next();
@@ -78,7 +78,6 @@ app.use(haltOnTimedout);
 // ========================================================
 require('./passport')(passport);
 
-
 //
 // Routes
 // ========================================================
@@ -114,10 +113,10 @@ app.use(function(err, req, res, next) { // eslint-disable-line no-unused-vars
   }));
 });
 
-
+module.exports = app;
 /* eslint-disable no-console */
-console.log(`
+/*console.log(`
   Server started!
-  Listening on ${ip}:${port}`);
+  Listening on ${ip}:${port}`);*/
 /* eslint-enable no-console */
-app.listen(port);
+//app.listen(port);

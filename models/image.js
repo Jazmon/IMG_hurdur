@@ -1,25 +1,33 @@
-const DataTypes = require('sequelize').DataTypes;
-const sequelize = require('../sequelize');
+module.exports = (sequelize, DataTypes) => {
+  const Image = sequelize.define('image', {
+    uploadPath: {
+      type: DataTypes.STRING,
+      field: 'upload_path',
+    },
+    title: {
+      type: DataTypes.STRING,
+      field: 'title',
+    },
+    description: {
+      type: DataTypes.TEXT,
+      field: 'description',
+    },
+  }, {
+    classMethods: {
+      associate: (models) => {
+        /*Image.hasMany(models.Comment, {
+          as: 'comments'
+        });
+        Image.hasMany(models.Like, {
+          as: 'likes'
+        });*/
+      }
+    }
+  });
 
-const Image = sequelize.define('image', {
-  uploadPath: {
-    type: DataTypes.STRING,
-    field: 'upload_path',
-  },
-  title: {
-    type: DataTypes.STRING,
-    field: 'title',
-  },
-  description: {
-    type: DataTypes.TEXT,
-    field: 'description',
-  },
-}, {
-  classMethods: {
-    
-  }
-});
-module.exports = Image;
+  return Image;
+};
+
 
 /*
 const ImageSchema = new mongoose.Schema({
