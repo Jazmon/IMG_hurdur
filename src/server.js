@@ -12,6 +12,7 @@ const exphbs = require('express-handlebars');
 const session = require('express-session');
 const passport = require('passport');
 const mongoose = require('mongoose');
+const admin = require('sriracha');
 
 const {
   port,
@@ -77,6 +78,7 @@ app.use(haltOnTimedout);
 require('./passport')(passport);
 
 require('./routes/index')(app, passport);
+app.use('/admin', admin());
 //
 // Error handling
 // ========================================================
